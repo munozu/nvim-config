@@ -21,7 +21,7 @@ nmap <c-s-t> :vs<bar>:b#<CR>:wq
 
 " ----- theme --------
 set cc=100 " highlight five columns after 'textwidth'
-
+set lazyredraw
 set termguicolors
 let base16colorspace=256  " Access colors present in 256 colorspace"
 
@@ -114,7 +114,9 @@ let g:ctrlp_custom_ignore = {
 " Use the nearest .git directory as the cwd
 " This makes a lot of sense if you are working on a project that is in version
 " control. It also supports works with .svn, .hg, .bzr.
-let g:ctrlp_working_path_mode = 'r'
+let g:ctrlp_working_path_mode = ''
+set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     " MacOSX/Linux
+set wildignore+=*\\tmp\\*,*\\node_modules\\*,*.swp,*.zip,*.exe  " Windowskjh
 
 " Easy bindings for its various modes
 nmap <leader>bb :CtrlPBuffer<cr>
@@ -152,23 +154,23 @@ let g:lightline = {
 set showtabline=2   " always show tabline
 
 " use lightline-buffer in lightline
-let g:lightline = {
-    \ 'tabline': {
-        \ 'left': [ [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
-        \ 'right': [ [ 'close' ], ],
-        \ },
-    \ 'component_expand': {
-        \ 'buffercurrent': 'lightline#buffer#buffercurrent2',
-        \ },
-    \ 'component_type': {
-        \ 'buffercurrent': 'tabsel',
-        \ },
-    \ 'component_function': {
-        \ 'bufferbefore': 'lightline#buffer#bufferbefore',
-        \ 'bufferafter': 'lightline#buffer#bufferafter',
-        \ 'bufferinfo': 'lightline#buffer#bufferinfo',
-        \ },
-    \ }
+" let g:lightline = {
+"     \ 'tabline': {
+"         \ 'left': [ [ 'bufferinfo' ], [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+"         \ 'right': [ [ 'close' ], ],
+"         \ },
+"     \ 'component_expand': {
+"         \ 'buffercurrent': 'lightline#buffer#buffercurrent2',
+"         \ },
+"     \ 'component_type': {
+"         \ 'buffercurrent': 'tabsel',
+"         \ },
+"     \ 'component_function': {
+"         \ 'bufferbefore': 'lightline#buffer#bufferbefore',
+"         \ 'bufferafter': 'lightline#buffer#bufferafter',
+"         \ 'bufferinfo': 'lightline#buffer#bufferinfo',
+"         \ },
+"     \ }
 
 " remap arrow keys
 nnoremap <Left> :bprev<CR>
@@ -187,21 +189,21 @@ nnoremap <Right> :bnext<CR>
 " let g:lightline_buffer_separator_icon = ' '
 
 " lightline-buffer function settings
-let g:lightline_buffer_show_bufnr = 1
-let g:lightline_buffer_rotate = 0
-let g:lightline_buffer_fname_mod = ':t'
-let g:lightline_buffer_excludes = ['vimfiler']
+" let g:lightline_buffer_show_bufnr = 1
+" let g:lightline_buffer_rotate = 0
+" let g:lightline_buffer_fname_mod = ':t'
+" let g:lightline_buffer_excludes = ['vimfiler']
 
-let g:lightline_buffer_maxflen = 30
-let g:lightline_buffer_maxfextlen = 3
-let g:lightline_buffer_minflen = 16
-let g:lightline_buffer_minfextlen = 3
-let g:lightline_buffer_reservelen = 20
+" let g:lightline_buffer_maxflen = 30
+" let g:lightline_buffer_maxfextlen = 3
+" let g:lightline_buffer_minflen = 16
+" let g:lightline_buffer_minfextlen = 3
+" let g:lightline_buffer_reservelen = 20
 
 
 " ------ Misc ------
 set number
-set relativenumber
+" set relativenumber
 
 "vi copy cut & paste
 nmap <C-c> "+yaw
