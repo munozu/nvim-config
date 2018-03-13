@@ -10,15 +10,16 @@ filetype off
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.vim/plugged')
 
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'chriskempson/base16-vim'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-fugitive'
 Plug 'pangloss/vim-javascript'
 Plug 'MaxMEllon/vim-jsx-pretty'
+Plug 'flowtype/vim-flow'
 Plug 'Valloric/YouCompleteMe'
 Plug 'SirVer/ultisnips'
 Plug 'itchyny/lightline.vim'
@@ -27,6 +28,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'jiangmiao/auto-pairs'
 Plug 'w0rp/ale'
 Plug 'wincent/command-t'
+Plug 'airblade/vim-gitgutter'
 
 " Initialize plugin system
 call plug#end()
@@ -41,9 +43,15 @@ let g:jsx_ext_required = 0
 
 au BufRead,BufNewFile *.js set filetype=javascript.jsx
 
-
 " Turn on syntax highlighting 
 syntax on
+
+" backup to ~/.tmp
+set backup
+set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+set backupskip=/tmp/*,/private/tmp/*
+set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+set writebackup
 
 " Put this in vimrc or a plugin file of your own.
 " After this is configured, :ALEFix will try and fix your JS code with ESLint.
@@ -63,6 +71,7 @@ let mapleader = ","
 
 " Security
 set modelines=0
+set directory^=$HOME/.vim/tmp//
 
 " Show line numbers
 set number
@@ -83,8 +92,7 @@ vnoremap <silent> <F6>         <C-C>:update<CR>
 inoremap <silent> <F6>         <C-O>:update<CR>
 
 " Whitespace
-set wrap
-set textwidth=79
+set textwidth=99
 set formatoptions=tcqrn1
 set tabstop=2
 set shiftwidth=2
@@ -96,6 +104,7 @@ set noshiftround
 set scrolloff=3
 set backspace=indent,eol,start
 set matchpairs+=<:> " use % to jump between pairs runtime! macros/matchit.vim
+set mouse=a
 
 " Move up/down editor lines
 nnoremap j gj
@@ -125,7 +134,6 @@ set showmatch
 map <leader><space> :let @/=''<cr> " clear search
 
 
-autocmd vimenter * NERDTree
 
 " Formatting
 map <leader>q gqip
@@ -148,9 +156,12 @@ if filereadable(expand("~/.vimrc_background"))
 endif
 set termguicolors
 set cursorline
-set colorcolumn=80
+set colorcolumn=100
 set splitright
 set splitbelow
+
+nnoremap <silent> <Leader>= :exe "vertical resize +10"<CR>
+nnoremap <silent> <Leader>- :exe "vertical resize -10"<CR>
 
 
 "Close every window in the current tabview but the current one
@@ -158,7 +169,7 @@ nnoremap <leader>o <C-w>o
 
 nnoremap <leader>h :bprev<cr>
 nnoremap <leader>l :bnext<cr>
-nnoremap <leader>w :bdelete<cr>
+nnoremap <leader>bq :bp\|bd #<CR>
 nnoremap <leader>ls :buffers<cr>
 nnoremap <leader>cb :buffers<CR>:buffer<Space>
 
