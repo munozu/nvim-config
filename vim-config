@@ -1,5 +1,6 @@
 " Don't try to be vi compatible
 set nocompatible
+set noswapfile
 
 " Helps force plugins to load correctly when it is turned back on below
 filetype off
@@ -25,26 +26,100 @@ Plug 'SirVer/ultisnips'
 Plug 'itchyny/lightline.vim'
 Plug 'taohex/lightline-buffer'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'jiangmiao/auto-pairs'
+Plug 'vim-scripts/auto-pairs-gentle'
 Plug 'w0rp/ale'
-Plug 'wincent/command-t'
+Plug 'alvan/vim-closetag'
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'airblade/vim-gitgutter'
+Plug 'jparise/vim-graphql'
+Plug 'Yggdroot/indentLine'
+Plug 'ternjs/tern_for_vim'
+Plug 'mattn/emmet-vim'
 
 " Initialize plugin system
 call plug#end()
-
 
 " For plugins to load correctly
 filetype plugin indent on
 
 let g:vim_jsx_pretty_colorful_config = 1 " default 0
 let g:javascript_plugin_flow = 1
-let g:jsx_ext_required = 0
+" let g:jsx_ext_required = 0:
+let g:flow#timeout = 4
+
+"Use locally installed flow
+let local_flow = finddir('node_modules', '.;') . '/.bin/flow'
+if matchstr(local_flow, "^\/\\w") == ''
+    let local_flow= getcwd() . "/" . local_flow
+endif
+if executable(local_flow)
+  let g:flow#flowpath = local_flow
+endif
+
+let g:ale_sign_error = '●' " Less aggressive than the default '>>'
+let g:ale_sign_warning = '.'
+let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
+
+let g:user_emmet_leader_key='<Tab>' " <tab><leader> 
+let g:user_emmet_settings = {
+  \  'javascript.jsx' : {
+    \      'extends' : 'jsx',
+    \  },
+  \}
+
+" filenames like *.xml, *.html, *.xhtml, ...
+" These are the file extensions where this plugin is enabled.
+"
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml'
+
+" filenames like *.xml, *.xhtml, ...
+" This will make the list of non-closing tags self-closing in the specified files.
+"
+let g:closetag_xhtml_filenames = '*.xhtml,*.js,*.jsx'
+
+" integer value [0|1]
+" This will make the list of non-closing tags case-sensitive (e.g. `<Link>` will be closed while `<link>` won't.)
+"
+let g:closetag_emptyTags_caseSensitive = 1
+
+" Shortcut for closing tags, default is '>'
+"
+let g:closetag_shortcut = '>'
+
+" Add > at current position without closing the current tag, default is ''
+"
+let g:closetag_close_shortcut = '<leader>>'
 
 au BufRead,BufNewFile *.js set filetype=javascript.jsx
 
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+
+set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     " MacOSX/Linux
+
+let g:ctrlp_custom_ignore = '\v/node_modules/$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ } 
+
 " Turn on syntax highlighting 
 syntax on
+if has("autocmd") && exists("+omnifunc")
+	autocmd Filetype *
+		    \	if &omnifunc == "" |
+		    \		setlocal omnifunc=syntaxcomplete#Complete |
+		    \	endif
+endif
+
+"vi copy cut & paste
+nmap <C-c> "+yaw
+vmap <C-c> "+y
+vmap <C-x> "+d
+vmap <C-x> "+d
+
 
 " backup to ~/.tmp
 set backup
@@ -55,19 +130,30 @@ set writebackup
 
 " Put this in vimrc or a plugin file of your own.
 " After this is configured, :ALEFix will try and fix your JS code with ESLint.
-let g:ale_fixers = {
-\   'javascript': ['eslint', 'flow'],
+let g:ale_linters= {
+\   'javascript.jsx': ['eslint','flow'],
 \}
+" Enable completion where available.
+let g:ale_completion_enabled = 1
+highlight ALEWarning ctermbg=DarkMagenta
+
+let g:flow#showquickfix = 0
 
 let g:lightline = {
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'readonly', 'filename', 'modified' ] ]
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head'
       \ },
       \ }
 
 " TODO: Pick a leader key
 let mapleader = ","
+
+let g:indentLine_char = '⎸'
+let g:indentLine_enabled = 1
 
 " Security
 set modelines=0
@@ -97,11 +183,11 @@ set formatoptions=tcqrn1
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2
-set expandtab
+"set expandtab
 set noshiftround
 
 " Cursor motion
-set scrolloff=3
+set scrolloff=20
 set backspace=indent,eol,start
 set matchpairs+=<:> " use % to jump between pairs runtime! macros/matchit.vim
 set mouse=a
@@ -166,7 +252,6 @@ nnoremap <silent> <Leader>- :exe "vertical resize -10"<CR>
 
 "Close every window in the current tabview but the current one
 nnoremap <leader>o <C-w>o
-
 nnoremap <leader>h :bprev<cr>
 nnoremap <leader>l :bnext<cr>
 nnoremap <leader>bq :bp\|bd #<CR>
@@ -179,7 +264,7 @@ nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
 nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
 nnoremap <silent> <C-\> :TmuxNavigatePrevious<cr>
 
-if &term =~ '256color'
+if &term =~ 'screen-256color'
     " disable background color erase
     set t_ut=
 endif
@@ -217,6 +302,9 @@ let g:lightline = {
 " remap arrow keys
 nnoremap <Left> :bprev<CR>
 nnoremap <Right> :bnext<CR>
+
+" no concealing qotes in json
+let g:indentLine_concealcursor='nc'
 
 " lightline-buffer ui settings
 " replace these symbols with ascii characters if your environment does not support unicode
