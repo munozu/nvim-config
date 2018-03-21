@@ -20,14 +20,11 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'pangloss/vim-javascript'
 Plug 'MaxMEllon/vim-jsx-pretty'
-Plug 'flowtype/vim-flow'
-Plug 'Valloric/YouCompleteMe'
 Plug 'SirVer/ultisnips'
 Plug 'itchyny/lightline.vim'
 Plug 'taohex/lightline-buffer'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'vim-scripts/auto-pairs-gentle'
-Plug 'w0rp/ale'
 Plug 'alvan/vim-closetag'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'airblade/vim-gitgutter'
@@ -35,6 +32,7 @@ Plug 'jparise/vim-graphql'
 Plug 'Yggdroot/indentLine'
 Plug 'ternjs/tern_for_vim'
 Plug 'mattn/emmet-vim'
+Plug 'vim-syntastic/syntastic'
 
 " Initialize plugin system
 call plug#end()
@@ -44,7 +42,6 @@ filetype plugin indent on
 
 let g:vim_jsx_pretty_colorful_config = 1 " default 0
 let g:javascript_plugin_flow = 1
-" let g:jsx_ext_required = 0:
 let g:flow#timeout = 4
 
 "Use locally installed flow
@@ -56,9 +53,6 @@ if executable(local_flow)
   let g:flow#flowpath = local_flow
 endif
 
-let g:ale_sign_error = '●' " Less aggressive than the default '>>'
-let g:ale_sign_warning = '.'
-let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
 
 let g:user_emmet_leader_key='<Tab>' " <tab><leader> 
 let g:user_emmet_settings = {
@@ -127,15 +121,6 @@ set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set backupskip=/tmp/*,/private/tmp/*
 set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set writebackup
-
-" Put this in vimrc or a plugin file of your own.
-" After this is configured, :ALEFix will try and fix your JS code with ESLint.
-let g:ale_linters= {
-\   'javascript.jsx': ['eslint','flow'],
-\}
-" Enable completion where available.
-let g:ale_completion_enabled = 1
-highlight ALEWarning ctermbg=DarkMagenta
 
 let g:flow#showquickfix = 0
 
