@@ -15,24 +15,30 @@ Plug 'chriskempson/base16-vim'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'pangloss/vim-javascript'
 Plug 'MaxMEllon/vim-jsx-pretty'
+Plug 'Valloric/YouCompleteMe'
 Plug 'SirVer/ultisnips'
 Plug 'itchyny/lightline.vim'
 Plug 'taohex/lightline-buffer'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'vim-scripts/auto-pairs-gentle'
 Plug 'alvan/vim-closetag'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'airblade/vim-gitgutter'
+Plug 'moll/vim-node'
 Plug 'jparise/vim-graphql'
 Plug 'Yggdroot/indentLine'
 Plug 'ternjs/tern_for_vim'
 Plug 'mattn/emmet-vim'
 Plug 'vim-syntastic/syntastic'
+Plug 'rizzatti/dash.vim'
+Plug 'Shougo/unite.vim'
+Plug 'Shougo/vimfiler.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-unimpaired'
 
 " Initialize plugin system
 call plug#end()
@@ -41,17 +47,29 @@ call plug#end()
 filetype plugin indent on
 
 let g:vim_jsx_pretty_colorful_config = 1 " default 0
-let g:javascript_plugin_flow = 1
-let g:flow#timeout = 4
 
-"Use locally installed flow
-let local_flow = finddir('node_modules', '.;') . '/.bin/flow'
-if matchstr(local_flow, "^\/\\w") == ''
-    let local_flow= getcwd() . "/" . local_flow
-endif
-if executable(local_flow)
-  let g:flow#flowpath = local_flow
-endif
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
+let g:syntastic_javascript_checkers = ['eslint']
+
+nnoremap <silent> <Leader>bq :lclose<CR>:bdelete<CR>
+cabbrev <silent> bd lclose\|bdelete
+
+" FZF
+nnoremap <c-p> :GFiles<cr>
+nnoremap <Leader>b :Buffer<cr>
+nnoremap <Leader>f :Files<cr>
+nnoremap <leader>ag :Ag<cr>
+nnoremap <leader>c :Commits<cr>
+
+nnoremap - :VimFiler <CR>
+nnoremap ; :
 
 
 let g:user_emmet_leader_key='<Tab>' " <tab><leader> 
@@ -80,27 +98,24 @@ let g:closetag_emptyTags_caseSensitive = 1
 "
 let g:closetag_shortcut = '>'
 
+
+
 " Add > at current position without closing the current tag, default is ''
 "
 let g:closetag_close_shortcut = '<leader>>'
 
 au BufRead,BufNewFile *.js set filetype=javascript.jsx
 
-let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
 
 set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     " MacOSX/Linux
 
-let g:ctrlp_custom_ignore = '\v/node_modules/$'
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-  \ 'file': '\v\.(exe|so|dll)$',
-  \ 'link': 'some_bad_symbolic_links',
-  \ } 
 
 " Turn on syntax highlighting 
 syntax on
+set synmaxcol=120
+set wrap
+set wrapmargin=0
+
 if has("autocmd") && exists("+omnifunc")
 	autocmd Filetype *
 		    \	if &omnifunc == "" |
@@ -122,7 +137,14 @@ set backupskip=/tmp/*,/private/tmp/*
 set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set writebackup
 
-let g:flow#showquickfix = 0
+" Put this in vimrc or a plugin file of your own.
+" After this is configured, :ALEFix will try and fix your JS code with ESLint.
+let g:ale_linters= {
+\   'javascript.jsx': ['eslint'],
+\}
+" Enable completion where available.
+let g:ale_completion_enabled = 0
+highlight ALEWarning ctermbg=DarkMagenta
 
 let g:lightline = {
       \ 'active': {
@@ -161,6 +183,12 @@ set encoding=utf-8
 noremap <silent> <F6>          :update<CR>
 vnoremap <silent> <F6>         <C-C>:update<CR>
 inoremap <silent> <F6>         <C-O>:update<CR>
+noremap <silent> <Leader>s          :update<CR>
+vnoremap <silent> <Leader>s         <C-C>:update<CR>
+inoremap <silent> <Leader>s        <C-O>:update<CR>
+
+inoremap <Leader>w <C-W>
+inoremap <Space><Tab> <C-x><C-o>
 
 " Whitespace
 set textwidth=99
@@ -183,7 +211,7 @@ nnoremap k gk
 
 " Allow hidden buffers
 set hidden
-
+"
 " Rendering
 set ttyfast
 
@@ -249,6 +277,10 @@ nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
 nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
 nnoremap <silent> <C-\> :TmuxNavigatePrevious<cr>
 
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
 if &term =~ 'screen-256color'
     " disable background color erase
     set t_ut=
