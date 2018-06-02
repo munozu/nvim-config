@@ -39,6 +39,9 @@ Plug 'Shougo/vimfiler.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-unimpaired'
+Plug 'fatih/vim-go'
+Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
+
 
 " Initialize plugin system
 call plug#end()
@@ -270,6 +273,7 @@ nnoremap <leader>l :bnext<cr>
 nnoremap <leader>bq :bp\|bd #<CR>
 nnoremap <leader>ls :buffers<cr>
 nnoremap <leader>cb :buffers<CR>:buffer<Space>
+nnoremap gd :YcmCompleter GoTo<CR>
 
 nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
 nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
