@@ -41,7 +41,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-unimpaired'
 Plug 'fatih/vim-go'
 Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
-
+Plug 'ruanyl/vim-sort-imports'
 
 " Initialize plugin system
 call plug#end()
@@ -51,31 +51,18 @@ filetype plugin indent on
 
 let g:vim_jsx_pretty_colorful_config = 1 " default 0
 
+
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
-let g:syntastic_always_populate_loc_list = 0
-let g:syntastic_auto_loc_list = 0
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 1
 let g:syntastic_javascript_checkers = ['eslint']
 
-nnoremap <silent> <Leader>bq :lclose<CR>:bdelete<CR>
-cabbrev <silent> bd lclose\|bdelete
-
-" FZF
-nnoremap <c-p> :GFiles<cr>
-nnoremap <Leader>b :Buffer<cr>
-nnoremap <Leader>f :Files<cr>
-nnoremap <leader>ag :Ag<cr>
-nnoremap <leader>c :Commits<cr>
-
-nnoremap - :VimFiler <CR>
-nnoremap ; :
-
-
-let g:user_emmet_leader_key='<Tab>' " <tab><leader> 
+let g:user_emmet_leader_key='<C-m>' " <tab><leader> 
 let g:user_emmet_settings = {
   \  'javascript.jsx' : {
     \      'extends' : 'jsx',
@@ -115,6 +102,7 @@ set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     " MacOSX/Linux
 
 " Turn on syntax highlighting 
 syntax on
+
 set synmaxcol=120
 set wrap
 set wrapmargin=0
@@ -126,11 +114,6 @@ if has("autocmd") && exists("+omnifunc")
 		    \	endif
 endif
 
-"vi copy cut & paste
-nmap <C-c> "+yaw
-vmap <C-c> "+y
-vmap <C-x> "+d
-vmap <C-x> "+d
 
 
 " backup to ~/.tmp
@@ -182,16 +165,6 @@ set t_vb=
 " Encoding
 set encoding=utf-8
 
-" Ctrl-s to save
-noremap <silent> <F6>          :update<CR>
-vnoremap <silent> <F6>         <C-C>:update<CR>
-inoremap <silent> <F6>         <C-O>:update<CR>
-noremap <silent> <Leader>s          :update<CR>
-vnoremap <silent> <Leader>s         <C-C>:update<CR>
-inoremap <silent> <Leader>s        <C-O>:update<CR>
-
-inoremap <Leader>w <C-W>
-inoremap <Space><Tab> <C-x><C-o>
 
 " Whitespace
 set textwidth=99
@@ -208,9 +181,6 @@ set backspace=indent,eol,start
 set matchpairs+=<:> " use % to jump between pairs runtime! macros/matchit.vim
 set mouse=a
 
-" Move up/down editor lines
-nnoremap j gj
-nnoremap k gk
 
 " Allow hidden buffers
 set hidden
@@ -225,27 +195,14 @@ set laststatus=2
 set showmode
 set showcmd
 
-" Searching
-nnoremap / /\v
-vnoremap / /\v
 set hlsearch
 set incsearch
 set ignorecase
 set smartcase
 set showmatch
-map <leader><space> :let @/=''<cr> " clear search
-
-
-
-" Formatting
-map <leader>q gqip
 
 " Visualize tabs and newlines
 set listchars=tab:▸\ ,eol:¬
-" Uncomment this to enable by default:
-" set list " To enable by default
-" Or use your leader key + l to toggle on/off
-map <leader>l :set list!<CR> " Toggle tabs and EOL
 
 " Color scheme (terminal)
 set background=dark
@@ -258,33 +215,10 @@ if filereadable(expand("~/.vimrc_background"))
 endif
 set termguicolors
 set cursorline
-set colorcolumn=100
+set colorcolumn=120
 set splitright
 set splitbelow
 
-nnoremap <silent> <Leader>= :exe "vertical resize +10"<CR>
-nnoremap <silent> <Leader>- :exe "vertical resize -10"<CR>
-
-
-"Close every window in the current tabview but the current one
-nnoremap <leader>o <C-w>o
-nnoremap <leader>h :bprev<cr>
-nnoremap <leader>l :bnext<cr>
-nnoremap <leader>bq :bp\|bd #<CR>
-nnoremap <leader>ls :buffers<cr>
-nnoremap <leader>cb :buffers<CR>:buffer<Space>
-nnoremap gd :YcmCompleter GoTo<CR>
-
-nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
-nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
-nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
-nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
-nnoremap <silent> <C-\> :TmuxNavigatePrevious<cr>
-
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
 if &term =~ 'screen-256color'
     " disable background color erase
     set t_ut=
@@ -319,10 +253,6 @@ let g:lightline = {
     \   'separator': '',
     \ },
     \ }
-
-" remap arrow keys
-nnoremap <Left> :bprev<CR>
-nnoremap <Right> :bnext<CR>
 
 " no concealing qotes in json
 let g:indentLine_concealcursor='nc'
@@ -367,3 +297,73 @@ let g:lightline_buffer_minfextlen = 3
 
 " reserve length for other component (e.g. info, close)
 let g:lightline_buffer_reservelen = 20
+
+nnoremap <Leader>bq :lclose<CR>:bdelete<CR>
+nnoremap <leader>g :GFiles<cr>
+nnoremap <leader>, :Buffer<cr>
+nnoremap <leader>f :Files<cr>
+nnoremap <leader>ag :Ag<cr>
+nnoremap <leader>r :e!<cr>
+nnoremap <leader>c :Commits<cr>
+nnoremap - :VimFiler <CR>
+nnoremap ; :
+
+
+" remap arrow keys
+nnoremap <Left> :bprev<CR>
+nnoremap <Right> :bnext<CR>
+
+"vi copy cut & paste
+nmap <C-c> "+yaw
+vmap <C-c> "+y
+vmap <C-x> "+d
+vmap <C-x> "+d
+
+
+" Ctrl-s to save
+noremap <silent> <F6>          :update<CR>
+vnoremap <silent> <F6>         <C-C>:update<CR>
+inoremap <silent> <F6>         <C-O>:update<CR>
+noremap <silent> <Leader>s         :update<CR>
+vnoremap <silent> <Leader>s        :update<CR>
+inoremap <silent> <Leader>s        :update<CR>
+
+inoremap <Leader>w <C-W>
+inoremap <Space><Tab> <C-x><C-o>
+
+nnoremap <silent> <Leader>= :exe "vertical resize +10"<CR>
+nnoremap <silent> <Leader>- :exe "vertical resize -10"<CR>
+nnoremap <silent> <Leader>0 <C-w>=
+
+
+"Close every window in the current tabview but the current one
+nnoremap <Leader>o <C-w>o
+nnoremap <Leader>h :bprev<CR>
+nnoremap <Leader>l :bnext<CR>
+nnoremap <Leader>bq :bp\|bd #<CR>
+
+nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
+nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
+nnoremap <silent> <C-\> :TmuxNavigatePrevious<cr>
+
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+" Move up/down editor lines
+nnoremap j gj
+nnoremap k gk
+
+" Searching
+nnoremap / /\v
+vnoremap / /\v
+
+
+map <leader><space> :let @/=''<cr> " clear search
+
+" Formatting
+map <leader>q gqip
+nnoremap gd :YcmCompleter GoTo<CR>
+
