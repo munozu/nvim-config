@@ -39,8 +39,6 @@ Plug 'Shougo/vimfiler.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-unimpaired'
-Plug 'fatih/vim-go'
-Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 Plug 'ruanyl/vim-sort-imports'
 
 " Initialize plugin system
@@ -48,6 +46,8 @@ call plug#end()
 
 " For plugins to load correctly
 filetype plugin indent on
+
+" let g:import_sort_auto = 1
 
 let g:vim_jsx_pretty_colorful_config = 1 " default 0
 
@@ -365,5 +365,3 @@ map <leader><space> :let @/=''<cr> " clear search
 
 " Formatting
 map <leader>q gqip
-nnoremap gd :YcmCompleter GoTo<CR>
-
