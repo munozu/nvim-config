@@ -103,6 +103,18 @@ set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     " MacOSX/Linux
 " Turn on syntax highlighting 
 syntax on
 
+let g:go_fmt_command = "goimports"
+let g:go_highlight_functions = 1
+let g:go_highlight_function_arguments = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_types = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_highlight_variable_assignments = 1
+let g:go_highlight_operators = 1
+let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
+
 set synmaxcol=120
 set wrap
 set wrapmargin=0
