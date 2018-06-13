@@ -39,6 +39,8 @@ Plug 'Shougo/vimfiler.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-unimpaired'
+Plug 'fatih/vim-go'
+Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 Plug 'ruanyl/vim-sort-imports'
 
 " Initialize plugin system
@@ -46,8 +48,6 @@ call plug#end()
 
 " For plugins to load correctly
 filetype plugin indent on
-
-" let g:import_sort_auto = 1
 
 let g:vim_jsx_pretty_colorful_config = 1 " default 0
 
@@ -298,6 +298,16 @@ let g:lightline_buffer_minfextlen = 3
 " reserve length for other component (e.g. info, close)
 let g:lightline_buffer_reservelen = 20
 
+
+" GO STUFF 
+let g:go_highlight_types = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_fmt_command = "goimports"
+
 nnoremap <Leader>bq :lclose<CR>:bdelete<CR>
 nnoremap <leader>g :GFiles<cr>
 nnoremap <leader>, :Buffer<cr>
@@ -356,14 +366,15 @@ nnoremap <C-H> <C-W><C-H>
 nnoremap j gj
 nnoremap k gk
 
-nnoremap gd :YcmCompleter GoTo
-
 " Searching
 nnoremap / /\v
 vnoremap / /\v
 
+tnoremap <C-N>N <C-\><C-N>
 
 map <leader><space> :let @/=''<cr> " clear search
 
 " Formatting
 map <leader>q gqip
+nnoremap gd :YcmCompleter GoTo<CR>
+
