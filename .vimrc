@@ -13,7 +13,8 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'chriskempson/base16-vim'
 Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-commentary'
+" Plug 'tpope/vim-commentary'
+Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
@@ -21,6 +22,9 @@ Plug 'pangloss/vim-javascript'
 Plug 'MaxMEllon/vim-jsx-pretty'
 Plug 'Valloric/YouCompleteMe'
 Plug 'SirVer/ultisnips'
+Plug 'epilande/vim-es2015-snippets'
+Plug 'epilande/vim-react-snippets'
+Plug 'honza/vim-snippets'
 Plug 'itchyny/lightline.vim'
 Plug 'taohex/lightline-buffer'
 Plug 'christoomey/vim-tmux-navigator'
@@ -51,6 +55,11 @@ filetype plugin indent on
 
 let g:vim_jsx_pretty_colorful_config = 1 " default 0
 
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<C-l>"
+
+
+let g:gitgutter_map_keys = 0
 
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
@@ -113,7 +122,11 @@ let g:go_highlight_fields = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_operators = 1
-let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
+" let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
+let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
+let g:go_metalinter_autosave = 1
+let g:go_metalinter_autosave_enabled = ['vet', 'golint']
+let g:go_metalinter_deadline = "5s"
 
 set synmaxcol=120
 set wrap
@@ -166,7 +179,7 @@ set directory^=$HOME/.vim/tmp//
 
 " Show line numbers
 set number
-set relativenumber
+" set relativenumber
 
 " Show file stats
 set ruler
@@ -320,20 +333,30 @@ let g:go_highlight_function_calls = 1
 let g:go_highlight_operators = 1
 let g:go_fmt_command = "goimports"
 
+function! s:vimfiler_settings()
+	nnoremap <buffer>s :<C-u>call vimfiler#mappings#do_switch_action('split')<CR>
+	nnoremap <buffer>v :<C-u>call vimfiler#mappings#do_switch_action('vsplit')<CR>
+endfunction
+
 nnoremap <Leader>bq :lclose<CR>:bdelete<CR>
 nnoremap <leader>g :GFiles<cr>
-nnoremap <leader>, :Buffer<cr>
+nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>f :Files<cr>
 nnoremap <leader>ag :Ag<cr>
 nnoremap <leader>r :e!<cr>
 nnoremap <leader>c :Commits<cr>
 nnoremap - :VimFiler <CR>
 nnoremap ; :
+nnoremap <leader>, ;
 
+nnoremap ]] ]}
+nnoremap [[ [{
 
 " remap arrow keys
 nnoremap <Left> :bprev<CR>
 nnoremap <Right> :bnext<CR>
+nnoremap <Up> <C-U>
+nnoremap <Down> <C-D>
 
 "vi copy cut & paste
 nmap <C-c> "+yaw
