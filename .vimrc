@@ -38,6 +38,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'moll/vim-node'
 Plug 'jparise/vim-graphql'
 " Plug 'Yggdroot/indentLine'
+Plug 'nathanaelkane/vim-indent-guides'
 Plug 'ternjs/tern_for_vim'
 Plug 'mattn/emmet-vim'
 Plug 'vim-syntastic/syntastic'
@@ -126,7 +127,6 @@ let g:go_highlight_fields = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_operators = 1
-" let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
 let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
 let g:go_metalinter_autosave = 1
 let g:go_metalinter_autosave_enabled = ['vet', 'golint']
@@ -146,8 +146,6 @@ if has("autocmd") && exists("+omnifunc")
         \ endif
 endif
 
-
-
 " backup to ~/.tmp
 set backup
 set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
@@ -155,13 +153,6 @@ set backupskip=/tmp/*,/private/tmp/*
 set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set writebackup
 
-" Put this in vimrc or a plugin file of your own.
-" After this is configured, :ALEFix will try and fix your JS code with ESLint.
-let g:ale_linters= {
-\   'javascript.jsx': ['eslint'],
-\}
-" Enable completion where available.
-let g:ale_completion_enabled = 0
 highlight ALEWarning ctermbg=DarkMagenta
 
 let g:lightline = {
@@ -177,13 +168,6 @@ let g:lightline = {
 " TODO: Pick a leader key
 let mapleader = ","
 
-" use for using tabs
-" let g:indentLine_char = '⎸'
-" let g:indentLine_enabled = 1
-" let g:indentLine_concealcursor='nc' 
-" let g:indentLine_bgcolor_term = 202
-" let g:indentLine_bgcolor_gui = '#FF5F00'
-
 " Security
 set modelines=0
 set directory^=$HOME/.vim/tmp//
@@ -199,15 +183,15 @@ set ruler
 set t_vb=
 
 
-
 " Whitespace
 set textwidth=99
 set formatoptions=tcqrn1
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2
-set expandtab
-set noshiftround
+set noexpandtab
+set shiftround
+set smarttab
 
 " Cursor motion
 set scrolloff=20
@@ -236,71 +220,19 @@ set ignorecase
 set smartcase
 set showmatch
 
-" Visualize tabs and newlines
-" let g:indentLine_enabled = 1
-" let g:indentLine_concealcursor='nc' 
-" let g:indentLine_bgcolor_term = 202
-" let g:indentLine_bgcolor_gui = '#FF5F00'
+" let g:indent_guides_enable_on_vim_startup = 1
+" let g:indent_guides_start_level=2
+" " let g:indent_guides_guide_size=2
+" hi IndentGuidesEven ctermbg=236
+" hi IndentGuidesOdd ctermbg=232
 
-" Security
-set modelines=0
-set directory^=$HOME/.vim/tmp//
-
-" Show line numbers
-set number
-" set relativenumber
-
-" Show file stats
-set ruler
-
-" no visualbell
-set t_vb=
-
-
-
-" Whitespace
-set textwidth=99
-set formatoptions=tcqrn1
-set tabstop=2
-set shiftwidth=2
-set softtabstop=2
-set expandtab
-set noshiftround
-
-" Cursor motion
-set scrolloff=20
-set backspace=indent,eol,start
-set matchpairs+=<:> " use % to jump between pairs runtime! macros/matchit.vim
-set mouse=a
-
-
-" Allow hidden buffers
-set hidden
-"
-" Rendering
-set ttyfast
-
-" Status bar
-set laststatus=2
-
-" Last line
-set showmode
-set showcmd
-
-set hlsearch
-set incsearch
-
-set ignorecase
-set smartcase
-set showmatch
 
 " Visualize tabs and newlines
-set listchars=tab:\│\ ,trail:~,precedes:←,extends:→,eol:¬,nbsp:␣
+set listchars=tab:\·\ ,trail:~,precedes:←,extends:→,eol:¬,nbsp:·
 if has('patch-7.4.710')
-    set listchars+=space:␣
-  endif
+	set listchars+=space:·
+endif
 set list
-
 
 " Color scheme (terminal)
 set background=dark
