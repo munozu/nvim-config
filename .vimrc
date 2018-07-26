@@ -1,3 +1,6 @@
+" Encoding
+set encoding=utf-8
+
 " Don't try to be vi compatible
 set nocompatible
 set noswapfile
@@ -11,6 +14,7 @@ filetype off
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.vim/plugged')
 
+Plug 'junegunn/goyo.vim'
 Plug 'chriskempson/base16-vim'
 Plug 'tpope/vim-sensible'
 " Plug 'tpope/vim-commentary'
@@ -33,7 +37,7 @@ Plug 'alvan/vim-closetag'
 Plug 'airblade/vim-gitgutter'
 Plug 'moll/vim-node'
 Plug 'jparise/vim-graphql'
-Plug 'Yggdroot/indentLine'
+" Plug 'Yggdroot/indentLine'
 Plug 'ternjs/tern_for_vim'
 Plug 'mattn/emmet-vim'
 Plug 'vim-syntastic/syntastic'
@@ -128,15 +132,18 @@ let g:go_metalinter_autosave = 1
 let g:go_metalinter_autosave_enabled = ['vet', 'golint']
 let g:go_metalinter_deadline = "5s"
 
+" <leader>t runs go test
+autocmd FileType go nmap <leader>t  <Plug>(go-test)
+
 set synmaxcol=120
 set wrap
 set wrapmargin=0
 
 if has("autocmd") && exists("+omnifunc")
-	autocmd Filetype *
-		    \	if &omnifunc == "" |
-		    \		setlocal omnifunc=syntaxcomplete#Complete |
-		    \	endif
+  autocmd Filetype *
+        \ if &omnifunc == "" |
+        \   setlocal omnifunc=syntaxcomplete#Complete |
+        \ endif
 endif
 
 
@@ -170,8 +177,12 @@ let g:lightline = {
 " TODO: Pick a leader key
 let mapleader = ","
 
-let g:indentLine_char = '⎸'
-let g:indentLine_enabled = 1
+" use for using tabs
+" let g:indentLine_char = '⎸'
+" let g:indentLine_enabled = 1
+" let g:indentLine_concealcursor='nc' 
+" let g:indentLine_bgcolor_term = 202
+" let g:indentLine_bgcolor_gui = '#FF5F00'
 
 " Security
 set modelines=0
@@ -187,8 +198,6 @@ set ruler
 " no visualbell
 set t_vb=
 
-" Encoding
-set encoding=utf-8
 
 
 " Whitespace
@@ -197,7 +206,7 @@ set formatoptions=tcqrn1
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2
-"set expandtab
+set expandtab
 set noshiftround
 
 " Cursor motion
@@ -222,12 +231,76 @@ set showcmd
 
 set hlsearch
 set incsearch
+
 set ignorecase
 set smartcase
 set showmatch
 
 " Visualize tabs and newlines
-set listchars=tab:▸\ ,eol:¬
+" let g:indentLine_enabled = 1
+" let g:indentLine_concealcursor='nc' 
+" let g:indentLine_bgcolor_term = 202
+" let g:indentLine_bgcolor_gui = '#FF5F00'
+
+" Security
+set modelines=0
+set directory^=$HOME/.vim/tmp//
+
+" Show line numbers
+set number
+" set relativenumber
+
+" Show file stats
+set ruler
+
+" no visualbell
+set t_vb=
+
+
+
+" Whitespace
+set textwidth=99
+set formatoptions=tcqrn1
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set noshiftround
+
+" Cursor motion
+set scrolloff=20
+set backspace=indent,eol,start
+set matchpairs+=<:> " use % to jump between pairs runtime! macros/matchit.vim
+set mouse=a
+
+
+" Allow hidden buffers
+set hidden
+"
+" Rendering
+set ttyfast
+
+" Status bar
+set laststatus=2
+
+" Last line
+set showmode
+set showcmd
+
+set hlsearch
+set incsearch
+
+set ignorecase
+set smartcase
+set showmatch
+
+" Visualize tabs and newlines
+set listchars=tab:\│\ ,trail:~,precedes:←,extends:→,eol:¬,nbsp:␣
+if has('patch-7.4.710')
+    set listchars+=space:␣
+  endif
+set list
+
 
 " Color scheme (terminal)
 set background=dark
@@ -280,7 +353,6 @@ let g:lightline = {
     \ }
 
 " no concealing qotes in json
-let g:indentLine_concealcursor='nc'
 
 " lightline-buffer ui settings
 " replace these symbols with ascii characters if your environment does not support unicode
@@ -334,8 +406,8 @@ let g:go_highlight_operators = 1
 let g:go_fmt_command = "goimports"
 
 function! s:vimfiler_settings()
-	nnoremap <buffer>s :<C-u>call vimfiler#mappings#do_switch_action('split')<CR>
-	nnoremap <buffer>v :<C-u>call vimfiler#mappings#do_switch_action('vsplit')<CR>
+  nnoremap <buffer>s :<C-u>call vimfiler#mappings#do_switch_action('split')<CR>
+  nnoremap <buffer>v :<C-u>call vimfiler#mappings#do_switch_action('vsplit')<CR>
 endfunction
 
 nnoremap <Leader>bq :lclose<CR>:bdelete<CR>
@@ -380,6 +452,9 @@ nnoremap <silent> <Leader>= :exe "vertical resize +10"<CR>
 nnoremap <silent> <Leader>- :exe "vertical resize -10"<CR>
 nnoremap <silent> <Leader>0 <C-w>=
 
+" fix indentation
+nnoremap <silent> == =ap
+
 
 "Close every window in the current tabview but the current one
 nnoremap <Leader>o <C-w>o
@@ -413,3 +488,20 @@ map <leader><space> :let @/=''<cr> " clear search
 map <leader>q gqip
 nnoremap gd :YcmCompleter GoTo<CR>
 
+" LINUX/WIN
+" nnoremap <A-j> :m .+1<CR>==
+" nnoremap <A-k> :m .-2<CR>==
+" inoremap <A-j> <Esc>:m .+1<CR>==gi
+" inoremap <A-k> <Esc>:m .-2<CR>==gi
+" vnoremap <A-j> :m '>+1<CR>gv=gv
+" vnoremap <A-k> :m '<-2<CR>gv=gv
+
+" MACOS 
+" ∆ === Alt + J
+" ˚ === Alt + K
+nnoremap ∆ :m .+1<CR>==
+nnoremap ˚ :m .-2<CR>==
+inoremap ∆ <Esc>:m .+1<CR>==gi
+inoremap ˚ <Esc>:m .-2<CR>==gi
+vnoremap ∆ :m '>+1<CR>gv=gv
+vnoremap ˚ :m '<-2<CR>gv=gv
