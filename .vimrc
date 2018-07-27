@@ -244,7 +244,9 @@ if filereadable(expand("~/.vimrc_background"))
   source ~/.vimrc_background
 endif
 set termguicolors
-set cursorline
+" set cursorline 
+hi clear Cursorline 
+hi CursorlineNR cterm=bold 
 set colorcolumn=120
 set splitright
 set splitbelow
