@@ -8,10 +8,7 @@ set noswapfile
 " Helps force plugins to load correctly when it is turned back on below
 filetype off
 
-" TODO: Load plugins here (pathogen or vundle)
-" Specify a directory for plugins
 " - For Neovim: ~/.local/share/nvim/plugged
-" - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.vim/plugged')
 
 Plug 'junegunn/goyo.vim'
@@ -31,17 +28,24 @@ Plug 'epilande/vim-react-snippets'
 Plug 'honza/vim-snippets'
 Plug 'itchyny/lightline.vim'
 Plug 'taohex/lightline-buffer'
-Plug 'christoomey/vim-tmux-navigator'
+" Plug 'christoomey/vim-tmux-navigator'
 Plug 'vim-scripts/auto-pairs-gentle'
 Plug 'alvan/vim-closetag'
 Plug 'airblade/vim-gitgutter'
 Plug 'moll/vim-node'
 Plug 'jparise/vim-graphql'
 " Plug 'Yggdroot/indentLine'
-Plug 'nathanaelkane/vim-indent-guides'
+" Plug 'nathanaelkane/vim-indent-guides'
 Plug 'ternjs/tern_for_vim'
 Plug 'mattn/emmet-vim'
 Plug 'vim-syntastic/syntastic'
+Plug 'ElmCast/elm-vim'
+Plug 'nbouscal/vim-stylish-haskell'
+" Plug 'eagletmt/ghcmod-vim'
+" Plug 'eagletmt/neco-ghc'
+" Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+Plug 'neovimhaskell/haskell-vim'
+Plug 'hail2u/vim-css3-syntax'
 Plug 'rizzatti/dash.vim'
 Plug 'Shougo/unite.vim'
 Plug 'Shougo/vimfiler.vim'
@@ -51,6 +55,10 @@ Plug 'tpope/vim-unimpaired'
 Plug 'fatih/vim-go'
 Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 Plug 'ruanyl/vim-sort-imports'
+" post install (yarn install | npm install) then load plugin only for editing supported files
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'yarn install',
+  \ 'for': ['javascript', 'typescript', 'graphql' ] }
 
 " Initialize plugin system
 call plug#end()
@@ -75,8 +83,13 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 1
 let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_haskell_checkers = ['hlint']
+let g:elm_syntastic_show_warnings = 1
+let g:elm_setup_keybindings = 0
+let g:elm_format_autosave = 1
 
-let g:user_emmet_leader_key='<C-m>' " <tab><leader> 
+let g:user_emmet_leader_key='µ' " <tab><leader> 
+
 let g:user_emmet_settings = {
   \  'javascript.jsx' : {
     \      'extends' : 'jsx',
@@ -101,8 +114,8 @@ let g:closetag_emptyTags_caseSensitive = 1
 " Shortcut for closing tags, default is '>'
 "
 let g:closetag_shortcut = '>'
-
-
+" let g:indentLine_char = '│'
+" let g:indentLine_enabled = 0
 
 " Add > at current position without closing the current tag, default is ''
 "
@@ -116,6 +129,8 @@ set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     " MacOSX/Linux
 
 " Turn on syntax highlighting 
 syntax on
+
+let $PATH .= (":" . $HOME . "/.cabal/bin" . ":" . $HOME . "/.local/bin")
 
 let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
@@ -146,6 +161,7 @@ if has("autocmd") && exists("+omnifunc")
         \ endif
 endif
 
+
 " backup to ~/.tmp
 set backup
 set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
@@ -165,7 +181,6 @@ let g:lightline = {
       \ },
       \ }
 
-" TODO: Pick a leader key
 let mapleader = ","
 
 " Security
@@ -238,7 +253,7 @@ set list
 set background=dark
 set t_Co=256
 set term=xterm-256color
-colorscheme base16-monokai
+colorscheme base16-material
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   source ~/.vimrc_background
@@ -251,9 +266,18 @@ set colorcolumn=120
 set splitright
 set splitbelow
 
+" Triger `autoread` when files changes on disk
+" https://unix.stackexchange.com/questions/149209/refresh-changed-content-of-file-opened-in-vim/383044#383044
+" https://vi.stackexchange.com/questions/13692/prevent-focusgained-autocmd-running-in-command-line-editing-mode
+autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
+" Notification after file change
+" https://vi.stackexchange.com/questions/13091/autocmd-event-for-autoread
+autocmd FileChangedShellPost *
+			\ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
+
 if &term =~ 'screen-256color'
-    " disable background color erase
-    set t_ut=
+	" disable background color erase
+	set t_ut=
 endif
 
 " lightline buffeo 
@@ -287,6 +311,22 @@ let g:lightline = {
     \ }
 
 " no concealing qotes in json
+let g:ycm_semantic_triggers = {
+     \ 'elm' : ['.'],
+		 \ 'haskell' : ['.'],
+     \}
+
+" Disable haskell-vim omnifunc
+let g:haskellmode_completion_ghc = 0
+autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc expandtab
+autocmd FileType elm,haskell setlocal sw=4 ts=4 nolist expandtab
+
+augroup VimCSS3Syntax
+  autocmd!
+
+  autocmd FileType css,js,javascript.jsx setlocal iskeyword+=-
+augroup END
+
 
 " lightline-buffer ui settings
 " replace these symbols with ascii characters if your environment does not support unicode
@@ -344,8 +384,12 @@ function! s:vimfiler_settings()
   nnoremap <buffer>v :<C-u>call vimfiler#mappings#do_switch_action('vsplit')<CR>
 endfunction
 
+" nnoremap <Leader>ht :GhcModType<cr>
+" nnoremap <Leader>htc :GhcModTypeClear<cr>
+
 nnoremap <Leader>bq :lclose<CR>:bdelete<CR>
 nnoremap <leader>g :GFiles<cr>
+nnoremap <Space>t :GFiles?<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>f :Files<cr>
 nnoremap <leader>ag :Ag<cr>
@@ -374,10 +418,8 @@ vmap <C-x> "+d
 " Ctrl-s to save
 noremap <silent> <F6>          :update<CR>
 vnoremap <silent> <F6>         <C-C>:update<CR>
-inoremap <silent> <F6>         <C-O>:update<CR>
-noremap <silent> <Leader>s         :update<CR>
-vnoremap <silent> <Leader>s        :update<CR>
-inoremap <silent> <Leader>s        :update<CR>
+noremap <silent> <Leader>s :update<CR>:e!<CR>
+vnoremap <silent> <Leader>s :update<CR>:e!<CR>
 
 inoremap <Leader>w <C-W>
 inoremap <Space><Tab> <C-x><C-o>
@@ -389,6 +431,7 @@ nnoremap <silent> <Leader>0 <C-w>=
 " fix indentation
 nnoremap <silent> == =ap
 
+nnoremap p p==
 
 "Close every window in the current tabview but the current one
 nnoremap <Leader>o <C-w>o
@@ -438,4 +481,3 @@ nnoremap ˚ :m .-2<CR>==
 inoremap ∆ <Esc>:m .+1<CR>==gi
 inoremap ˚ <Esc>:m .-2<CR>==gi
 vnoremap ∆ :m '>+1<CR>gv=gv
-vnoremap ˚ :m '<-2<CR>gv=gv
