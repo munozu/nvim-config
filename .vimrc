@@ -38,7 +38,8 @@ Plug 'jparise/vim-graphql'
 " Plug 'nathanaelkane/vim-indent-guides'
 Plug 'ternjs/tern_for_vim'
 Plug 'mattn/emmet-vim'
-Plug 'vim-syntastic/syntastic'
+" Plug 'vim-syntastic/syntastic'
+Plug 'w0rp/ale'
 Plug 'ElmCast/elm-vim'
 Plug 'nbouscal/vim-stylish-haskell'
 " Plug 'eagletmt/ghcmod-vim'
@@ -55,10 +56,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'fatih/vim-go'
 Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 Plug 'ruanyl/vim-sort-imports'
-" post install (yarn install | npm install) then load plugin only for editing supported files
-Plug 'prettier/vim-prettier', {
-  \ 'do': 'yarn install',
-  \ 'for': ['javascript', 'typescript', 'graphql' ] }
 
 " Initialize plugin system
 call plug#end()
@@ -74,17 +71,17 @@ let g:UltiSnipsExpandTrigger="<C-l>"
 
 let g:gitgutter_map_keys = 0
 
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 1
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_haskell_checkers = ['hlint']
-let g:elm_syntastic_show_warnings = 1
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
+"
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 1
+" let g:syntastic_javascript_checkers = ['eslint']
+" let g:syntastic_haskell_checkers = ['hlint']
+" let g:elm_syntastic_show_warnings = 1
 let g:elm_setup_keybindings = 0
 let g:elm_format_autosave = 1
 
@@ -161,7 +158,6 @@ if has("autocmd") && exists("+omnifunc")
         \ endif
 endif
 
-
 " backup to ~/.tmp
 set backup
 set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
@@ -169,7 +165,21 @@ set backupskip=/tmp/*,/private/tmp/*
 set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set writebackup
 
-highlight ALEWarning ctermbg=DarkMagenta
+let g:ale_linters = { 
+			\'javascript':['eslint'] 
+			\}
+
+let g:ale_fixers = {
+			\'javascript':['prettier']
+			\}
+
+let g:ale_fix_on_save = 1
+let g:ale_javascript_prettier_use_local_config = 1
+
+augroup FiletypeGroup
+    autocmd!
+    au BufNewFile,BufRead *.js set filetype=javascript.jsx
+	augroup END
 
 let g:lightline = {
       \ 'active': {
