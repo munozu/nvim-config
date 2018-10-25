@@ -27,7 +27,7 @@ Plug 'epilande/vim-es2015-snippets'
 Plug 'epilande/vim-react-snippets'
 Plug 'honza/vim-snippets'
 Plug 'itchyny/lightline.vim'
-Plug 'taohex/lightline-buffer'
+Plug 'mgee/lightline-bufferline'
 " Plug 'christoomey/vim-tmux-navigator'
 Plug 'vim-scripts/auto-pairs-gentle'
 Plug 'alvan/vim-closetag'
@@ -119,6 +119,7 @@ let g:closetag_shortcut = '>'
 let g:closetag_close_shortcut = '<leader>>'
 
 au BufRead,BufNewFile *.js set filetype=javascript.jsx
+au BufRead,BufNewFile *.md setlocal spell
 
 
 set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     " MacOSX/Linux
@@ -173,23 +174,19 @@ let g:ale_fixers = {
 			\'javascript':['prettier']
 			\}
 
-let g:ale_fix_on_save = 1
+" let g:ale_fix_on_save = 1
 let g:ale_javascript_prettier_use_local_config = 1
+highlight ALEError ctermbg=0 cterm=underline ctermfg=red
+highlight ALEWarning ctermbg=0 cterm=underline ctermfg=red
 
-augroup FiletypeGroup
-    autocmd!
-    au BufNewFile,BufRead *.js set filetype=javascript.jsx
-	augroup END
+highlight clear SpellBad
+highlight SpellBad ctermbg=0 cterm=underline,bold ctermfg=red
 
-let g:lightline = {
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'fugitive#head'
-      \ },
-      \ }
+" augroup FiletypeGroup
+"     autocmd!
+"     au BufNewFile,BufRead *.js set filetype=javascript.jsx
+" 	augroup END
+
 
 let mapleader = ","
 
@@ -296,29 +293,34 @@ set showtabline=2  " always show tabline
 
 " use lightline-buffer in lightline
 let g:lightline = {
-    \ 'tabline': {
-    \   'left': [ [ 'bufferinfo' ],
-    \             [ 'separator' ],
-    \             [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
-    \   'right': [ [ 'close' ], ],
-    \ },
-    \ 'component_expand': {
-    \   'buffercurrent': 'lightline#buffer#buffercurrent',
-    \   'bufferbefore': 'lightline#buffer#bufferbefore',
-    \   'bufferafter': 'lightline#buffer#bufferafter',
-    \ },
-    \ 'component_type': {
-    \   'buffercurrent': 'tabsel',
-    \   'bufferbefore': 'raw',
-    \   'bufferafter': 'raw',
-    \ },
-    \ 'component_function': {
-    \   'bufferinfo': 'lightline#buffer#bufferinfo',
-    \ },
-    \ 'component': {
-    \   'separator': '',
-    \ },
-    \ }
+			\ 'tabline': { 'left': [[ 'buffers' ]], 'right': [[ 'close' ]] },
+			\ 'component_expand': { 'buffers': 'lightline#bufferline#buffers' },
+			\ 'component_type': {'buffers': 'tabsel' },
+			\ 'component_function': {
+			\		'filename': 'LightlineFilename',
+			\ },
+			\ 'component': {
+			\   'separator': '',
+			\ },
+			\ 'active': {
+			\   'left': [ [ 'mode', 'paste' ],
+			\             ['readonly', 'filename', 'modified', '' ] ]
+			\ },
+			\ }
+
+let g:lightline#bufferline#show_number  = 1
+let g:lightline#bufferline#shorten_path = 1
+let g:lightline#bufferline#unnamed      = '[No Name]'
+
+function! LightlineFilename()
+	return &filetype ==# 'vimfiler' ? vimfiler#get_status_string() :
+				\ &filetype ==# 'unite' ? unite#get_status_string() :
+        \ &filetype ==# 'vimshell' ? vimshell#get_status_string() :
+        \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+endfunction
+let g:unite_force_overwrite_statusline = 0
+let g:vimfiler_force_overwrite_statusline = 0
+let g:vimshell_force_overwrite_statusline = 0
 
 " no concealing qotes in json
 let g:ycm_semantic_triggers = {
@@ -330,6 +332,7 @@ let g:ycm_semantic_triggers = {
 let g:haskellmode_completion_ghc = 0
 autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc expandtab
 autocmd FileType elm,haskell setlocal sw=4 ts=4 nolist expandtab
+autocmd FileType md setlocal spell
 
 augroup VimCSS3Syntax
   autocmd!
