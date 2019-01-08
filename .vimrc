@@ -5,51 +5,58 @@ set encoding=utf-8
 set nocompatible
 set noswapfile
 
+set mouse=a
+
 " Helps force plugins to load correctly when it is turned back on below
 filetype off
 
 " - For Neovim: ~/.local/share/nvim/plugged
 call plug#begin('~/.vim/plugged')
 
-Plug 'junegunn/goyo.vim'
-Plug 'chriskempson/base16-vim'
-Plug 'tpope/vim-sensible'
-Plug 'tomtom/tcomment_vim'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-fugitive'
-Plug 'pangloss/vim-javascript' 
-Plug 'MaxMEllon/vim-jsx-pretty'
-Plug 'heavenshell/vim-jsdoc'
-Plug 'HerringtonDarkholme/yats.vim'
-Plug 'Valloric/YouCompleteMe'
-Plug 'SirVer/ultisnips'
-Plug 'epilande/vim-es2015-snippets'
-Plug 'epilande/vim-react-snippets'
-Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
-Plug 'honza/vim-snippets'
-Plug 'itchyny/lightline.vim'
-Plug 'mgee/lightline-bufferline'
-Plug 'vim-scripts/auto-pairs-gentle'
-Plug 'alvan/vim-closetag'
-Plug 'airblade/vim-gitgutter'
-Plug 'moll/vim-node'
-Plug 'jparise/vim-graphql'
-Plug 'mattn/emmet-vim'
 Plug 'w0rp/ale'
-Plug 'ElmCast/elm-vim'
-Plug 'neovimhaskell/haskell-vim'
-Plug 'alx741/vim-hindent'
+" Plug 'eagletmt/ghcmod-vim'
 Plug 'hail2u/vim-css3-syntax'
-Plug 'rizzatti/dash.vim'
+Plug 'Valloric/YouCompleteMe'
+Plug 'pangloss/vim-javascript' 
+" Plug 'jaspervdj/stylish-haskell'
+Plug 'fatih/vim-go'
+Plug 'mattn/emmet-vim'
+Plug 'MaxMEllon/vim-jsx-pretty'
+Plug 'nbouscal/vim-stylish-haskell'
+Plug 'heavenshell/vim-jsdoc'
+Plug 'wellle/targets.vim'
+Plug 'neovimhaskell/haskell-vim'
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'mgee/lightline-bufferline'
 Plug 'Shougo/unite.vim'
 Plug 'Shougo/vimfiler.vim'
+" Plug 'Shougo/vimproc'
+Plug 'chriskempson/base16-vim'
+Plug 'vim-scripts/auto-pairs-gentle'
+Plug 'SirVer/ultisnips'
+Plug 'airblade/vim-gitgutter'
+Plug 'rizzatti/dash.vim'
+Plug 'ElmCast/elm-vim'
+Plug 'alvan/vim-closetag'
+Plug 'alx741/vim-hindent'
+Plug 'moll/vim-node'
+Plug 'tomtom/tcomment_vim'
+Plug 'honza/vim-snippets'
+Plug 'jparise/vim-graphql'
+Plug 'epilande/vim-es2015-snippets'
+Plug 'epilande/vim-react-snippets'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
+Plug 'itchyny/lightline.vim'
+Plug 'ruanyl/vim-sort-imports'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'tpope/vim-unimpaired'
-Plug 'fatih/vim-go'
-Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
-Plug 'ruanyl/vim-sort-imports'
+Plug 'junegunn/goyo.vim'
+Plug 'rust-lang/rust.vim'
 
 " Initialize plugin system
 call plug#end()
@@ -57,9 +64,11 @@ call plug#end()
 
 " Put stuff oni related here
 if exists('g:gui_oni')
-	" Statements here
+    " Statements here
+    set shortmess=a
 endif
 
+set cmdheight=4
 
 " For plugins to load correctly
 filetype plugin indent on
@@ -122,9 +131,6 @@ let g:closetag_shortcut = '>'
 "
 let g:closetag_close_shortcut = '<leader>>'
 
-au BufRead,BufNewFile *.js set filetype=javascript.jsx
-" au BufRead,BufNewFile *.tsx set filetype=typescript.tsx
-au BufRead,BufNewFile *.md setlocal spell
 
 
 set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     " MacOSX/Linux
@@ -172,7 +178,8 @@ set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set writebackup
 
 let g:ale_linters = { 
-			\'javascript':['eslint'] 
+			\'javascript':['eslint'], 
+			\'haskell': ['stack-ghc', 'ghc-mod', 'hlint', 'hdevtools', 'hfmt'],
 			\}
 
 let g:ale_fixers = {
@@ -220,9 +227,9 @@ set formatoptions=tcqrn1
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2
-set noexpandtab
 set shiftround
 set smarttab
+set noexpandtab
 
 " Cursor motion
 set scrolloff=20
@@ -336,26 +343,49 @@ let g:ycm_semantic_triggers = {
 		 \ 'haskell' : ['.'],
 		 \ 'typescript' : ['.'],
 		 \ 'javascript' : ['.'],
+		 \ 'rust' : ['::'],
      \}
 
-" Disable haskell-vim omnifunc
-let g:haskellmode_completion_ghc = 0
-autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc expandtab
-autocmd FileType elm,haskell setlocal sw=4 ts=4 nolist expandtab
-autocmd FileType md setlocal spell
+let g:ycm_rust_src_path = '/Users/jake.munoz/.cargo/bin/rustc'
 
-let g:haskell_classic_highlighting = 1
-let g:haskell_indent_if = 3
-let g:haskell_indent_case = 2
-let g:haskell_indent_let = 4
-let g:haskell_indent_where = 6
-let g:haskell_indent_before_where = 2
-let g:haskell_indent_after_bare_where = 2
-let g:haskell_indent_do = 3
-let g:haskell_indent_in = 1
-let g:haskell_indent_guard = 2
-let g:haskell_indent_case_alternative = 1
-let g:cabal_indent_section = 2
+" Disable haskell-vim omnifunc
+let g:haskellmode_completion_ghc = 1
+let g:haskell_classic_highlighting = 0
+let g:hindent_on_save = 1
+let g:hindent_indent_size = 4
+
+au BufRead,BufNewFile *.js set filetype=javascript.jsx
+" au BufRead,BufNewFile *.tsx set filetype=typescript.tsx
+au BufRead,BufNewFile *.md setlocal spell nolist
+
+" autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc expandtab
+autocmd FileType elm,haskell,rust setlocal sw=4 ts=4 nolist expandtab
+autocmd FileType md setlocal spell nolist
+
+
+let g:haskell_enable_quantification = 1   " to enable highlighting of `forall`
+let g:haskell_enable_recursivedo = 1      " to enable highlighting of `mdo` and `rec`
+let g:haskell_enable_arrowsyntax = 1      " to enable highlighting of `proc`
+let g:haskell_enable_pattern_synonyms = 1 " to enable highlighting of `pattern`
+let g:haskell_enable_typeroles = 1        " to enable highlighting of type roles
+let g:haskell_enable_static_pointers = 1  " to enable highlighting of `static`
+let g:haskell_backpack = 1                " to enable highlighting of backpack keywords
+
+" ----- hindent & stylish-haskell -----
+
+" Indenting on save is too aggressive for me
+" let g:hindent_on_save = 0
+
+" Helper function, called below with mappings
+function! HaskellFormat(which) abort
+  if a:which ==# 'hindent' || a:which ==# 'both'
+    :Hindent
+  endif
+  if a:which ==# 'stylish' || a:which ==# 'both'
+    silent! exe 'undojoin'
+    silent! exe 'keepjumps %!stylish-haskell'
+  endif
+endfunction
 
 augroup VimCSS3Syntax
   autocmd!
@@ -388,7 +418,7 @@ let g:lightline_buffer_show_bufnr = 1
 let g:lightline_buffer_fname_mod = ':t'
 
 " hide buffer list
-let g:lightline_buffer_excludes = ['vimfiler']
+let g:lightline_buffer_excludes = ['vimfiler', 'terminal']
 
 " max file name length
 let g:lightline_buffer_maxflen = 30
@@ -428,10 +458,10 @@ nnoremap <leader>g :GFiles<cr>
 nnoremap <Space>t :GFiles?<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>f :Files<cr>
-nnoremap <leader>ag :Ag<cr>
+nnoremap <leader>ag :Rg<cr>
 nnoremap <leader>r :e!<cr>
 nnoremap <leader>c :Commits<cr>
-nnoremap - :VimFiler <CR>
+nnoremap - :VimFilerExplorer <CR>
 nnoremap ; :
 nnoremap <leader>, ;
 
@@ -459,8 +489,10 @@ vnoremap <silent> <F6>         <C-C>:update<CR>
 noremap <silent> <Leader>s :update<CR>:e!<CR>
 vnoremap <silent> <Leader>s :update<CR>:e!<CR>
 
-inoremap <Leader>w <C-W>
-inoremap <Space><Tab> <C-x><C-o>
+" mapping ctrl-backspace doesn't work in terminal vim this is a workaround
+inoremap ˙ <C-w>
+
+inoremap <C-Space> <C-x><C-o>
 
 nnoremap <silent> <Leader>= :exe "vertical resize +10"<CR>
 nnoremap <silent> <Leader>- :exe "vertical resize -10"<CR>
@@ -520,3 +552,4 @@ inoremap ∆ <Esc>:m .+1<CR>==gi
 inoremap ˚ <Esc>:m .-2<CR>==gi
 vnoremap ∆ :m '>+1<CR>gv=gv
 let g:AutoPairsShortcutFastWrap = '<C-e>'
+let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '`':'`', '|':'|'}
