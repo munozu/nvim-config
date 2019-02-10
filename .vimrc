@@ -13,51 +13,52 @@ filetype off
 " - For Neovim: ~/.local/share/nvim/plugged
 call plug#begin('~/.vim/plugged')
 
-Plug 'w0rp/ale'
-" Plug 'eagletmt/ghcmod-vim'
-Plug 'hail2u/vim-css3-syntax'
 Plug 'Valloric/YouCompleteMe'
-Plug 'pangloss/vim-javascript' 
-" Plug 'jaspervdj/stylish-haskell'
-Plug 'fatih/vim-go'
-Plug 'mattn/emmet-vim'
-Plug 'MaxMEllon/vim-jsx-pretty'
-Plug 'nbouscal/vim-stylish-haskell'
-Plug 'heavenshell/vim-jsdoc'
-Plug 'wellle/targets.vim'
-Plug 'neovimhaskell/haskell-vim'
-Plug 'HerringtonDarkholme/yats.vim'
-Plug 'mgee/lightline-bufferline'
-Plug 'Shougo/unite.vim'
-Plug 'Shougo/vimfiler.vim'
-" Plug 'Shougo/vimproc'
-Plug 'chriskempson/base16-vim'
-Plug 'vim-scripts/auto-pairs-gentle'
-Plug 'SirVer/ultisnips'
-Plug 'airblade/vim-gitgutter'
-Plug 'rizzatti/dash.vim'
-Plug 'ElmCast/elm-vim'
-Plug 'alvan/vim-closetag'
-Plug 'alx741/vim-hindent'
-Plug 'moll/vim-node'
+Plug 'w0rp/ale'
 Plug 'tomtom/tcomment_vim'
-Plug 'honza/vim-snippets'
-Plug 'jparise/vim-graphql'
+Plug 'Quramy/tsuquyomi'
+Plug 'SirVer/ultisnips'
+" Plug 'Shougo/vimproc'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
+Plug 'mgee/lightline-bufferline'
+Plug 'alvan/vim-closetag'
+Plug 'hail2u/vim-css3-syntax'
 Plug 'epilande/vim-es2015-snippets'
-Plug 'epilande/vim-react-snippets'
 Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'fatih/vim-go'
+Plug 'jparise/vim-graphql'
+" Plug 'jaspervdj/stylish-haskell'
+Plug 'alx741/vim-hindent'
+Plug 'pangloss/vim-javascript' 
+Plug 'heavenshell/vim-jsdoc'
+Plug 'MaxMEllon/vim-jsx-pretty'
+Plug 'moll/vim-node'
+Plug 'vim-scripts/auto-pairs-gentle'
+Plug 'epilande/vim-react-snippets'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-unimpaired'
-Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
-Plug 'itchyny/lightline.vim'
+Plug 'honza/vim-snippets'
 Plug 'ruanyl/vim-sort-imports'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'nbouscal/vim-stylish-haskell'
+Plug 'tpope/vim-surround'
+Plug 'cespare/vim-toml'
+Plug 'tpope/vim-unimpaired'
+Plug 'ElmCast/elm-vim'
+Plug 'mattn/emmet-vim'
+" Plug 'eagletmt/ghcmod-vim'
+Plug 'neovimhaskell/haskell-vim'
+Plug 'rizzatti/dash.vim'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/goyo.vim'
+Plug 'itchyny/lightline.vim'
 Plug 'rust-lang/rust.vim'
-
+Plug 'wellle/targets.vim'
+Plug 'Shougo/unite.vim'
+Plug 'Shougo/vimfiler.vim'
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'chriskempson/base16-vim'
 " Initialize plugin system
 call plug#end()
 
@@ -195,8 +196,14 @@ let g:ale_javascript_prettier_use_local_config = 1
 highlight ALEError ctermbg=0 cterm=underline ctermfg=red
 highlight ALEWarning ctermbg=0 cterm=underline ctermfg=red
 
-highlight clear SpellBad
-highlight SpellBad ctermbg=0 cterm=underline,bold ctermfg=red
+function! s:base16_customize() abort
+  call Base16hi("MatchParen", g:base16_gui05, g:base16_gui03, g:base16_cterm05, g:base16_cterm03, "bold,italic", "")
+endfunction
+
+augroup on_change_colorschema
+  autocmd!
+  autocmd ColorScheme * call s:base16_customize()
+augroup END
 
 " augroup FiletypeGroup
 "     autocmd!
@@ -274,13 +281,15 @@ set list
 
 " Color scheme (terminal)
 set background=dark
-set t_Co=256
+" set t_Co=256
+let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
+set termguicolors
 colorscheme base16-material
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   source ~/.vimrc_background
 endif
-set termguicolors
 " set cursorline 
 hi clear Cursorline 
 hi CursorlineNR cterm=bold 
@@ -323,6 +332,9 @@ let g:lightline = {
 			\ },
 			\ }
 
+"'time': %{strftime('%R', getftime(expand('%')))}
+
+
 let g:lightline#bufferline#show_number  = 1
 let g:lightline#bufferline#shorten_path = 1
 let g:lightline#bufferline#unnamed      = '[No Name]'
@@ -338,15 +350,15 @@ let g:vimfiler_force_overwrite_statusline = 0
 let g:vimshell_force_overwrite_statusline = 0
 
 " no concealing qotes in json
+let g:ycm_always_populate_location_list = 1
 let g:ycm_semantic_triggers = {
      \ 'elm' : ['.'],
 		 \ 'haskell' : ['.'],
-		 \ 'typescript' : ['.'],
-		 \ 'javascript' : ['.'],
-		 \ 'rust' : ['::'],
+		 \ 'typescript,javascript' : ['.'],
+		 \ 'rust' : [ '.', '::'],
      \}
 
-let g:ycm_rust_src_path = '/Users/jake.munoz/.cargo/bin/rustc'
+let g:ycm_rust_src_path = '/Users/jake.munoz/rustc-1.31.1/src'
 
 " Disable haskell-vim omnifunc
 let g:haskellmode_completion_ghc = 1
@@ -359,8 +371,10 @@ au BufRead,BufNewFile *.js set filetype=javascript.jsx
 au BufRead,BufNewFile *.md setlocal spell nolist
 
 " autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc expandtab
-autocmd FileType elm,haskell,rust setlocal sw=4 ts=4 nolist expandtab
+autocmd FileType elm,haskell setlocal sw=4 ts=4 nolist expandtab
 autocmd FileType md setlocal spell nolist
+
+autocmd FileType rust setlocal sw=4 ts=4 expandtab
 
 
 let g:haskell_enable_quantification = 1   " to enable highlighting of `forall`
@@ -445,10 +459,13 @@ let g:go_highlight_function_calls = 1
 let g:go_highlight_operators = 1
 let g:go_fmt_command = "goimports"
 
+let g:vimfiler_as_default_explorer = 1
 function! s:vimfiler_settings()
   nnoremap <buffer>s :<C-u>call vimfiler#mappings#do_switch_action('split')<CR>
   nnoremap <buffer>v :<C-u>call vimfiler#mappings#do_switch_action('vsplit')<CR>
 endfunction
+
+highlight Comment cterm=italic
 
 " nnoremap <Leader>ht :GhcModType<cr>
 " nnoremap <Leader>htc :GhcModTypeClear<cr>
@@ -513,7 +530,8 @@ nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
 nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
 nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
 nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
-nnoremap <silent> <C-\> :TmuxNavigatePrevious<cr>
+
+nnoremap <silent> <C-\> :ter<cr>
 
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
@@ -527,13 +545,12 @@ nnoremap k gk
 nnoremap / /\v
 vnoremap / /\v
 
-tnoremap <C-N>N <C-\><C-N>
-
 map <leader><space> :let @/=''<cr> " clear search
 
 " Formatting
 map <leader>q gqip
 nnoremap gd :YcmCompleter GoTo<CR>
+nnoremap <leader>d :YcmCompleter GetDoc<CR>
 
 " LINUX/WIN
 " nnoremap <A-j> :m .+1<CR>==
@@ -552,4 +569,4 @@ inoremap ∆ <Esc>:m .+1<CR>==gi
 inoremap ˚ <Esc>:m .-2<CR>==gi
 vnoremap ∆ :m '>+1<CR>gv=gv
 let g:AutoPairsShortcutFastWrap = '<C-e>'
-let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '`':'`', '|':'|'}
+let g:AutoPairs = {'|':'|','(':')', '[':']', '{':'}',"'":"'",'"':'"', '`':'`'}
